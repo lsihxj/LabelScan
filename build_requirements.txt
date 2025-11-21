@@ -1,0 +1,2 @@
+# 构建Windows独立部署版本所需的额外依赖
+pyinstaller>=6.0.0

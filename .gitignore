@@ -20,7 +20,7 @@ wheels/
 .installed.cfg
 *.egg
 
-# Virtual Environment
+# 虚拟环境
 venv/
 ENV/
 env/
@@ -32,29 +32,30 @@ env/
 *.swo
 *~
 
-# 测试
-.pytest_cache/
-.coverage
-htmlcov/
-
 # 日志
 logs/
 *.log
 
 # 临时文件
 temp/
-tmp/
 uploads/
-
-# 配置文件(敏感信息)
-config/ocr.yaml
-.env
+*.tmp
 
 # 前端
 frontend/node_modules/
 frontend/dist/
 frontend/.vite/
 
-# 操作系统
+# 构建产物
+build/
+dist/
+release/
+*.spec.bak
+
+# 系统文件
 .DS_Store
 Thumbs.db
+
+# 配置备份
+*.yaml.bak
+*.yml.bak

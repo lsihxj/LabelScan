@@ -1,0 +1,156 @@
+================================================================================
+                电子标签多条码识别系统 - Windows独立部署版本
+================================================================================
+
+本项目已配置完整的Windows独立部署方案，包含以下内容：
+
+【核心文件】
+1. build.spec              - PyInstaller打包配置文件
+2. build_windows.py        - 自动化构建脚本
+3. build_requirements.txt  - 构建工具依赖
+4. setup_config.py         - 配置检查和设置工具
+5. test_build.py          - 构建验证测试脚本
+6. 快速构建指南.md         - 详细的构建和部署文档
+
+【构建步骤】
+
+一、准备环境
+-----------
+1. 确保已安装 Python 3.10+
+2. 确保已安装 Node.js 18+
+3. 安装运行时依赖:
+   pip install -r requirements.txt
+
+4. 安装构建工具:
+   pip install -r build_requirements.txt
+
+
+二、执行构建 (推荐)
+------------------
+运行自动化构建脚本:
+   python build_windows.py
+
+脚本会自动完成所有步骤，包括：
+   ✓ 清理旧文件
+   ✓ 构建前端
+   ✓ 打包后端
+   ✓ 复制依赖
+   ✓ 创建启动脚本
+   ✓ 生成发布包
+
+
+三、手动构建 (可选)
+------------------
+如果需要手动控制：
+
+1. 构建前端:
+   cd frontend
+   npm install
+   npm run build
+   cd ..
+
+2. 打包后端:
+   pyinstaller build.spec --clean
+
+3. 整理文件:
+   - 复制 config/ 到 dist/LabelScan/
+   - 复制 frontend/dist/ 到 dist/LabelScan/frontend/
+   - 创建 logs/, temp/, uploads/ 目录
+
+
+四、验证构建
+-----------
+运行测试脚本验证构建:
+   python test_build.py
+
+测试内容：
+   ✓ 检查文件完整性
+   ✓ 启动服务器
+   ✓ 测试API端点
+   ✓ 验证Web界面
+
+
+五、配置检查
+-----------
+首次部署时运行配置工具:
+   python setup_config.py
+
+工具会自动：
+   ✓ 检查Python版本
+   ✓ 检测Tesseract OCR
+   ✓ 更新配置文件
+   ✓ 创建必要目录
+
+
+【构建产物】
+
+dist/LabelScan/               - 完整的应用程序
+├── LabelScan.exe            - 主程序
+├── start.bat                - 启动脚本
+├── README_部署说明.txt       - 部署文档
+├── config/                  - 配置文件
+├── frontend/dist/           - Web界面
+├── logs/                    - 日志目录
+├── temp/                    - 临时文件
+└── uploads/                 - 上传目录
+
+release/LabelScan_Windows_v1.0.0.zip  - 可分发的压缩包
+
+
+【部署到目标机器】
+
+1. 解压 LabelScan_Windows_v1.0.0.zip
+
+2. 安装 Tesseract OCR:
+   下载: https://github.com/UB-Mannheim/tesseract/wiki
+   注意安装中文语言包 (chi_sim)
+
+3. 配置 Tesseract 路径:
+   编辑 config/system.yaml
+   设置 ocr.local.tesseract_cmd 为实际路径
+
+4. 启动系统:
+   双击 start.bat
+
+5. 访问系统:
+   浏览器打开 http://localhost:8000
+
+
+【目标机器要求】
+
+必需:
+- Windows 10/11 (64位)
+- Tesseract OCR 5.3+
+
+可选:
+- Redis (用于缓存，可选)
+
+
+【常见问题】
+
+Q: 启动失败，端口被占用
+A: 修改 config/system.yaml 中的端口号
+
+Q: OCR识别失败
+A: 检查 Tesseract 是否正确安装，路径配置是否正确
+
+Q: 前端页面无法加载
+A: 确认 frontend/dist/ 目录完整存在
+
+Q: AI识别不可用
+A: 在Web界面的"AI设置"中配置API密钥
+
+
+【技术支持】
+
+详细文档: 快速构建指南.md
+日志文件: logs/app.log, logs/error.log
+API文档: http://localhost:8000/docs
+
+
+【版本信息】
+
+版本: 1.0.0
+更新日期: 2024
+
+================================================================================

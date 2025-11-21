@@ -4,7 +4,8 @@ FastAPI主应用
 """
 from fastapi import FastAPI, File, UploadFile, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import JSONResponse, StreamingResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import Optional, List
 import uuid
@@ -15,6 +16,7 @@ from loguru import logger
 import sys
 import json
 import cv2
+import os
 
 from backend.core.processor import LabelProcessor
 from backend.utils.config import config
@@ -94,6 +96,30 @@ uploads_dir = Path(config.get("system.upload.uploads_dir", "uploads"))
 temp_dir.mkdir(exist_ok=True)
 uploads_dir.mkdir(exist_ok=True)
 
+# 检测是否为打包后的环境
+if getattr(sys, 'frozen', False):
+    # PyInstaller打包后的环境
+    # sys._MEIPASS 指向 _internal 目录
+    base_path = Path(sys._MEIPASS)
+    static_dir = base_path / 'frontend' / 'dist'
+    logger.info(f"Running in packaged mode, base_path: {base_path}")
+else:
+    # 开发环境
+    base_path = Path(__file__).parent.parent
+    static_dir = base_path / 'frontend' / 'dist'
+    logger.info(f"Running in development mode, base_path: {base_path}")
+
+# 挂载静态文件服务(仅在静态文件目录存在时)
+if static_dir.exists():
+    assets_dir = static_dir / "assets"
+    if assets_dir.exists():
+        app.mount("/assets", StaticFiles(directory=str(assets_dir)), name="assets")
+        logger.info(f"Mounted static files from: {assets_dir}")
+    else:
+        logger.warning(f"Assets directory not found: {assets_dir}")
+else:
+    logger.warning(f"Static files directory not found: {static_dir}")
+
 
 # ============ 数据模型 ============
 
@@ -121,11 +147,19 @@ class ConfigUpdate(BaseModel):
 
 @app.get("/", tags=["Root"])
 async def root():
-    """根路径"""
+    """根路径 - 提供Web界面"""
+    # 如果存在前端构建文件，返回index.html
+    if static_dir.exists():
+        index_file = static_dir / "index.html"
+        if index_file.exists():
+            return FileResponse(str(index_file))
+    
+    # 否则返回API信息
     return {
         "name": "电子标签多条码识别系统",
         "version": "1.0.0",
-        "status": "running"
+        "status": "running",
+        "api_docs": "/docs"
     }
 
 
@@ -146,9 +180,9 @@ async def health_check():
 @app.post("/api/v1/process/single", tags=["Process"])
 async def process_single_image(
     image: UploadFile = File(...),
+    sort_order: str = Form(...),
     mode: str = Form("balanced"),
     recognition_mode: str = Form("barcode_only"),
-    sort_order: str = Form("reading_order"),
     ocr_mode: str = Form("local"),
     return_image: bool = Form(False)
 ):
@@ -156,9 +190,9 @@ async def process_single_image(
     处理单张图像
     
     - **image**: 图像文件
+    - **sort_order**: 排序方式 (reading_order/top_to_bottom/left_to_right) - 必填
     - **mode**: 处理模式 (fast/balanced/full)
     - **recognition_mode**: 识别模式 (barcode_only/ocr_only/barcode_and_ocr/ai)
-    - **sort_order**: 排序方式 (reading_order/top_to_bottom/left_to_right)
     - **ocr_mode**: OCR模式 (local/cloud)
     - **return_image**: 是否返回标注图像
     """
@@ -233,18 +267,18 @@ async def process_single_image(
 @app.post("/api/v1/process/single/stream", tags=["Process"])
 async def process_single_image_stream(
     image: UploadFile = File(...),
+    sort_order: str = Form(...),
     mode: str = Form("balanced"),
     recognition_mode: str = Form("ai"),
-    sort_order: str = Form("reading_order"),
     ocr_mode: str = Form("local")
 ):
     """
     流式处理单张图像(AI识别模式)
     
     - **image**: 图像文件
+    - **sort_order**: 排序方式 (reading_order/top_to_bottom/left_to_right) - 必填
     - **mode**: 处理模式
     - **recognition_mode**: 识别模式(必须为ai)
-    - **sort_order**: 排序方式
     - **ocr_mode**: OCR模式
     """
     request_id = str(uuid.uuid4())
@@ -323,15 +357,15 @@ async def process_single_image_stream(
 @app.post("/api/v1/process/batch", tags=["Process"])
 async def process_batch_images(
     images: List[UploadFile] = File(...),
-    mode: str = Form("balanced"),
-    sort_order: str = Form("reading_order")
+    sort_order: str = Form(...),
+    mode: str = Form("balanced")
 ):
     """
     批量处理图像
     
     - **images**: 图像文件列表
+    - **sort_order**: 排序方式 (reading_order/top_to_bottom/left_to_right) - 必填
     - **mode**: 处理模式
-    - **sort_order**: 排序方式
     """
     request_id = str(uuid.uuid4())
     batch_id = str(uuid.uuid4())

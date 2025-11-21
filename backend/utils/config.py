@@ -3,6 +3,7 @@
 负责加载和管理系统配置文件
 """
 import yaml
+import sys
 from pathlib import Path
 from typing import Dict, Any
 from loguru import logger
@@ -12,7 +13,17 @@ class ConfigManager:
     """配置管理器"""
     
     def __init__(self, config_dir: str = "config"):
-        self.config_dir = Path(config_dir)
+        # 打包后的程序需要从正确的位置加载配置
+        if getattr(sys, 'frozen', False):
+            # PyInstaller打包后,exe在LabelScan目录下,config也在同级
+            exe_dir = Path(sys.executable).parent
+            self.config_dir = exe_dir / config_dir
+            logger.debug(f"Running in packaged mode, exe_dir: {exe_dir}")
+        else:
+            # 开发环境
+            self.config_dir = Path(config_dir)
+        
+        logger.info(f"Config directory: {self.config_dir}")
         self._configs: Dict[str, Any] = {}
         self._load_all_configs()
     
