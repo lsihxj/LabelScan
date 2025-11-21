@@ -1,0 +1,27 @@
+# 核心依赖
+opencv-python>=4.5.0
+pyzbar>=0.1.9
+pytesseract>=0.3.10
+Pillow>=10.0.0
+numpy>=1.19.0
+
+# Web框架
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.6
+
+# 缓存和存储
+redis>=5.0.0
+
+# 工具库
+pydantic>=2.0.0
+pyyaml>=6.0.0
+python-jose[cryptography]>=3.3.0
+
+# 日志
+loguru>=0.7.0
+
+# 测试
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+httpx>=0.25.0

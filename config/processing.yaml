@@ -1,0 +1,37 @@
+# 处理模式配置
+modes:
+  default: "balanced"  # fast/balanced/full
+  
+# 图像预处理配置
+preprocessing:
+  max_image_size: 2000  # 像素
+  enable_resize: true
+  enable_grayscale: true
+  enable_contrast: true
+  enable_denoise: true
+  enable_binarize: true
+  
+# 排序配置
+sorting:
+  default_order: "reading_order"  # reading_order/top_to_bottom/left_to_right
+  position_tolerance: 30  # 像素
+  row_tolerance: 30  # 像素
+  col_tolerance: 20  # 像素
+  min_object_distance: 15  # 像素
+  
+# 关联分析配置
+association:
+  max_search_radius_multiplier: 2.0  # 条码宽度的倍数
+  direction_weights:
+    right: 0.8
+    bottom: 0.6
+    left: 0.4
+    top: 0.3
+  strong_threshold: 0.5
+  weak_threshold: 0.3
+  
+# 并发处理配置
+concurrency:
+  max_workers: 4
+  queue_size: 100
+  timeout_seconds: 30

@@ -1,0 +1,60 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 测试
+.pytest_cache/
+.coverage
+htmlcov/
+
+# 日志
+logs/
+*.log
+
+# 临时文件
+temp/
+tmp/
+uploads/
+
+# 配置文件(敏感信息)
+config/ocr.yaml
+.env
+
+# 前端
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# 操作系统
+.DS_Store
+Thumbs.db

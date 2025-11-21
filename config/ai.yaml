@@ -1,0 +1,35 @@
+ai:
+  active_model_id: '2'
+  enabled: true
+  models:
+  - active: false
+    id: '1'
+    max_tokens: 8000
+    model_name: moonshot-v1-128k-vision-preview
+    name: moonshot
+    provider_id: '1'
+    system_prompt: 你是一个电子元器件包装标签识别专家，熟悉电子元器件的各种包装的标签样式，能够识别出这些标签上的厂家、零件号、批号、DATECODE、数量等信息，并以Json格式返回这些识别出的数据：manufacturer,
+      PN, LOT, D/C, QTY。
+    temperature: 0.6
+    user_prompt: 请识别这张电子元器件包装标签上的包装信息：
+  - active: false
+    id: '2'
+    max_tokens: 8000
+    model_name: qwen3-vl-plus
+    name: qwen
+    provider_id: '2'
+    system_prompt: 你是一个电子元器件包装标签识别专家，熟悉电子元器件的各种包装的标签样式，能够识别出这些标签上的厂家、零件号、批号、DATECODE、数量等信息，并以Json格式返回这些识别出的数据：manufacturer,
+      PN, LOT, D/C, QTY。
+    temperature: 0.3
+    user_prompt: 请识别这张电子元器件包装标签上的包装信息：
+  providers:
+  - api_base: https://api.moonshot.cn/v1/chat/completions
+    api_key: sk-gLXKuukLUqxb6ImR3CJLFTiMS3wl2SrpcfQ6Nv5E5ZysQ093
+    enabled: false
+    id: '1'
+    name: moonshot
+  - api_base: https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+    api_key: sk-202a20a93b35489181d18159f946fc3a
+    enabled: true
+    id: '2'
+    name: qwen

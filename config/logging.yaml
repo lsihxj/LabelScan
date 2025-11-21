@@ -1,0 +1,25 @@
+# 日志配置
+logging:
+  level: "INFO"  # DEBUG/INFO/WARN/ERROR
+  
+  # 控制台输出
+  console:
+    enabled: true
+    format: "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>"
+    
+  # 文件输出
+  file:
+    enabled: true
+    path: "logs/app.log"
+    rotation: "100 MB"  # 日志轮转大小
+    retention: "30 days"  # 保留时间
+    compression: "zip"  # 压缩格式
+    format: "{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} - {message}"
+    
+  # 错误日志单独记录
+  error_file:
+    enabled: true
+    path: "logs/error.log"
+    rotation: "50 MB"
+    retention: "90 days"
+    level: "ERROR"
